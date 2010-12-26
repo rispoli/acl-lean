@@ -1,6 +1,6 @@
 :- op(400, fy, ~),
-   op(500, xfy, and),
-   op(600, xfy, or),
+   op(500, yfx, and),
+   op(600, yfx, or),
    op(650, xfy, says),
    op(700, xfy, ->),
    op(800, xfx, :),
