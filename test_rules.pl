@@ -27,11 +27,8 @@
 % DT
 ?- latexify(entails([transition(x, 'A', y), 'A' and 'B' says '\\alpha'], []), 'rules/dt.tex').
 
-% EQ: left expansion
-?- latexify(entails([transition(x, 'A', y)], [transition(x, 'B', y)]), 'rules/eql.tex').
-
-% EQ: right expansion
-?- latexify(entails([transition(x, 'A', y)], [transition(x, 'B', y)]), 'rules/eqr.tex').
+% EQ:
+?- latexify(entails([transition(x, 'A', y)], [transition(x, 'B', y)]), 'rules/eq.tex').
 
 % ID
 ?- latexify(entails([transition(x, 'A', y)], []), 'rules/id.tex').

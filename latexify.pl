@@ -82,7 +82,7 @@ latexify(Formula, Filename) :-
     tell(Filename),
     format('\\documentclass{article}~n\\pagestyle{empty}~n\\usepackage{prooftree}~n\\begin{document}~n~n\\begin{displaymath}~n'),
     reset_gensym,
-    search_nodes(Formula, Sequent),
+    search_nodes(Formula, [], Sequent),
     print_tree('', Sequent),
     format('\\end{displaymath}~n~n\\end{document}'),
     told.

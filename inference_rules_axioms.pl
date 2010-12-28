@@ -126,21 +126,27 @@ inference_rule(entails([_, transition(X, A, Y)], Δ), [entails([u : A], [u : B])
     member(transition(X, B, Y), Δ).
 
 % Trans
-inference_rule(entails([Γ, E], Δ), [entails([Z >= X, E | Γ], Δ)], 'Trans') :-
+inference_rule(entails([Γ, E], Δ), [entails([Z >= X, E | Γ], Δ)], Used, [Z >= Y, Y >= X | Used], 'Trans') :-
+    \+member(Z >= Y, Used),
+    \+member(Y >= X, Used),
     member(Z >= Y, [E | Γ]),
     member(Y >= X, [E | Γ]),
     \+member(Z >= X, [E | Γ]).
 
 % C
-inference_rule(entails([Γ, E], Δ), [entails([transition(Z, A, Z), E | Γ], Δ)], 'C') :-
+inference_rule(entails([Γ, E], Δ), [entails([transition(Z, A, Z), E | Γ], Δ)], Used, [Z >= Y, transition(X, A, Y) | Used], 'C') :-
+    \+member(Z >= Y, Used),
+    \+member(transition(X, A, Y), Used),
     (
         member(Z >= Y, [E | Γ]), !;
         Y = Z
     ),
-    member(transition(_, A, Y), [E | Γ]),
+    member(transition(X, A, Y), [E | Γ]),
     \+member(transition(Z, A, Z), [E | Γ]).
 
 % VD
-inference_rule(entails([Γ, E], Δ), [entails([transition(X, A, Z), E | Γ], Δ)], 'VD') :-
+inference_rule(entails([Γ, E], Δ), [entails([transition(X, A, Z), E | Γ], Δ)], Used, [Y >= X, transition(Y, A, Z) | Used], 'VD') :-
+    \+member(Y >= X, Used),
+    \+member(transition(Y, A, Z), Used),
     member(Y >= X, [E | Γ]),
     member(transition(Y, A, Z), [E | Γ]).
