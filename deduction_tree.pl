@@ -7,12 +7,12 @@ expand_premises([H | T], [T1 | T2]) :-
     search_nodes(H, T1),
     expand_premises(T, T2).
 
-expand_r(Γ, Δ, ([entails(Γ, Δ), Premises_tree], Rule)) :-
-    select(X, Δ, Δ_minus_X),
-    inference_rule_r(entails(Γ, [Δ_minus_X, X]), Premises, Rule), !,
+expand(Γ, Δ, ([entails(Γ, Δ), Premises_tree], Rule)) :-
+    select(X, Γ, Γ_minus_X),
+    inference_rule(entails([Γ_minus_X, X], Δ), Premises, Rule), !,
     expand_premises(Premises, Premises_tree).
 
-expand_r(Γ, Δ, ([entails(Γ, Δ), []], '')) :- !.
+expand(Γ, Δ, ([entails(Γ, Δ), []], '')) :- !.
 
 expand_l(Γ, Δ, ([entails(Γ, Δ), Premises_tree], Rule)) :-
     select(X, Γ, Γ_minus_X),
@@ -20,8 +20,17 @@ expand_l(Γ, Δ, ([entails(Γ, Δ), Premises_tree], Rule)) :-
     expand_premises(Premises, Premises_tree).
 
 expand_l(Γ, Δ, T) :-
-    order(r, Δ, Δ_o),
-    expand_r(Γ, Δ_o, T).
+    order(l, Γ, Γ_o),
+    expand(Γ_o, Δ, T).
+
+expand_r(Γ, Δ, ([entails(Γ, Δ), Premises_tree], Rule)) :-
+    select(X, Δ, Δ_minus_X),
+    inference_rule_r(entails(Γ, [Δ_minus_X, X]), Premises, Rule), !,
+    expand_premises(Premises, Premises_tree).
+
+expand_r(Γ, Δ, T) :-
+    order(l, Γ, Γ_o),
+    expand_l(Γ_o, Δ, T).
 
 search_nodes(entails(Γ, Δ), ([entails(Γ_o, Δ_o), []], Rule)) :-
     axiom(Γ, Δ, Rule), !,
@@ -29,5 +38,5 @@ search_nodes(entails(Γ, Δ), ([entails(Γ_o, Δ_o), []], Rule)) :-
     order(r, Δ, Δ_o).
 
 search_nodes(entails(Γ, Δ), T) :-
-    order(l, Γ, Γ_o),
-    expand_l(Γ_o, Δ, T).
+    order(r, Δ, Δ_o),
+    expand_r(Γ, Δ_o, T).
