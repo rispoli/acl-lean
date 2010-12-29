@@ -65,3 +65,6 @@
 
 % Unit
 ?- latexify(entails([transition(x, 'A', y)], []), 'rules/unit.tex').
+
+% VD
+?- latexify(entails([y >= x, transition(y, 'A', z)], []), 'rules/vd.tex').
