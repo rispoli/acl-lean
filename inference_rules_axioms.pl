@@ -42,7 +42,7 @@ inference_rule_r(entails(Γ, [Δ, X : Alpha -> Beta]), [entails([Y >= X, Y : Alp
 % ¬: left
 inference_rule_l(entails([Γ, X : ~Alpha], Δ), [entails([X : ~Alpha | Γ], [Y : Alpha | Δ])], '\\lnot L') :-
     (
-        member(Y >= X, Γ), !;
+        member(Y >= X, Γ);
         X = Y
     ),
     \+member(Y : Alpha, Δ).
@@ -50,7 +50,7 @@ inference_rule_l(entails([Γ, X : ~Alpha], Δ), [entails([X : ~Alpha | Γ], [Y :
 % ∧: left
 inference_rule_l(entails([Γ, X : Alpha and Beta], Δ), [entails([X : Alpha and Beta, Y : Alpha, Y : Beta | Γ], Δ)], '\\land L') :-
     (
-        member(Y >= X, Γ), !;
+        member(Y >= X, Γ);
         X = Y
     ),
     \+member(Y : Alpha, Γ),
@@ -59,7 +59,7 @@ inference_rule_l(entails([Γ, X : Alpha and Beta], Δ), [entails([X : Alpha and 
 % ∨: left
 inference_rule_l(entails([Γ, X : Alpha or Beta], Δ), [entails([X : Alpha or Beta, Y : Alpha | Γ], Δ), entails([X : Alpha or Beta, Y : Beta | Γ], Δ)], '\\lor L') :-
     (
-        member(Y >= X, Γ), !;
+        member(Y >= X, Γ);
         X = Y
     ),
     \+member(Y : Alpha, Γ),
@@ -68,7 +68,7 @@ inference_rule_l(entails([Γ, X : Alpha or Beta], Δ), [entails([X : Alpha or Be
 % says: left
 inference_rule_l(entails([Γ, X : A says Alpha], Δ), [entails([transition(Y, A_, Z)], [transition(Y, A, Z)]), entails([X : A says Alpha, Z : Alpha | Γ], Δ)], '\\mbox{{\\bf says} } L') :-
     (
-        member(Y >= X, Γ), !;
+        member(Y >= X, Γ);
         X = Y
     ),
     member(transition(Y, A_, Z), Γ),
@@ -77,7 +77,7 @@ inference_rule_l(entails([Γ, X : A says Alpha], Δ), [entails([transition(Y, A_
 % →: left
 inference_rule_l(entails([Γ, X : Alpha -> Beta], Δ), [entails([X : Alpha -> Beta | Γ], [Y : Alpha | Δ]), entails([X : Alpha -> Beta, Y : Beta | Γ], Δ)], '\\rightarrow L') :-
     (
-        member(Y >= X, Γ), !;
+        member(Y >= X, Γ);
         X = Y
     ),
     \+member(Y : Beta, Γ),
@@ -86,7 +86,7 @@ inference_rule_l(entails([Γ, X : Alpha -> Beta], Δ), [entails([X : Alpha -> Be
 % ATM
 inference_rule(entails([Γ, X : P], Δ), [entails([X : P, Y : P | Γ], Δ)], 'ATM') :-
     (
-        member(Y >= X, Γ), !;
+        member(Y >= X, Γ);
         X = Y
     ),
     \+member(Y : P, [X : P | Γ]),
@@ -138,7 +138,7 @@ inference_rule(entails([Γ, E], Δ), [entails([transition(Z, A, Z), E | Γ], Δ)
     \+member(Z >= Y, Used),
     \+member(transition(X, A, Y), Used),
     (
-        member(Z >= Y, [E | Γ]), !;
+        member(Z >= Y, [E | Γ]);
         Y = Z
     ),
     member(transition(X, A, Y), [E | Γ]),
