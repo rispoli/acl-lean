@@ -9,9 +9,8 @@ expand_premises([H | T], Used, [T1 | T2]) :-
 
 expand(Γ, Δ, Used, ([entails(Γ, Δ), Premises_tree], Rule)) :-
     select(X, Γ, Γ_minus_X),
-    \+member(X, Used),
     inference_rule(entails([Γ_minus_X, X], Δ), Premises, Rule),
-    expand_premises(Premises, [X | Used], Premises_tree).
+    expand_premises(Premises, Used, Premises_tree).
 
 expand(Γ, Δ, Used, ([entails(Γ, Δ), Premises_tree], Rule)) :-
     select(X, Γ, Γ_minus_X),
@@ -40,7 +39,7 @@ expand_r(Γ, Δ, Used, T) :-
     expand_l(Γ_o, Δ, Used, T).
 
 search_nodes(entails(Γ, Δ), _, ([entails(Γ_o, Δ_o), []], Rule)) :-
-    axiom(Γ, Δ, Rule).
+    axiom(Γ, Δ, Rule),
     order(l, Γ, Γ_o),
     order(r, Δ, Δ_o).
 
