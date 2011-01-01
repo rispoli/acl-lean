@@ -8,16 +8,16 @@ stringConcat([Head|Tail], TempString, Output) :-
     stringConcat(Tail, TempString1, Output).
 
 join(List, Separator, Output) :-
-    innerJoin(List, Separator, '', Output), !.
+    inner_join(List, Separator, '', Output), !.
 
-innerJoin([], _, _, '').
+inner_join([], _, _, '').
 
-innerJoin([Last], _, TempString, Output) :-
+inner_join([Last], _, TempString, Output) :-
     string_concat(TempString, Last, Output).
 
-innerJoin([Head | Tail], Separator, TempString, Output) :-
+inner_join([Head | Tail], Separator, TempString, Output) :-
     stringConcat([Head, Separator], TempString, TempString1),
-    innerJoin(Tail, Separator, TempString1, Output).
+    inner_join(Tail, Separator, TempString1, Output).
 
 functor2string(and, ' \\land ').
 functor2string(or, ' \\lor ').
@@ -52,7 +52,9 @@ proposition2string(Parent_functor, B_op, String) :-
         stringConcat(['(', A_s, Functor_s, B_s, ')'], '', String), !;
         stringConcat([A_s, Functor_s, B_s], '', String)).
 
-print_sequent(Indentation, entails(Γ, Δ)) :-
+print_sequent(Indentation, (Γ_, Δ_, Tr_Γ, Tr_Δ, Pre_ord)) :-
+    append([Pre_ord, Γ_, Tr_Γ], Γ),
+    append([Δ_, Tr_Δ], Δ),
     maplist(proposition2string(_), Γ, Γ_s),
     maplist(proposition2string(_), Δ, Δ_s),
     join(Γ_s, ', ', Γ_s_j),
@@ -79,10 +81,10 @@ print_tree(Indentation, ([Conclusion, Premises], Rule)) :-
     format('~w\\endprooftree~n', Indentation).
 
 latexify(Formula, Filename) :-
-    tell(Filename),
-    format('\\documentclass{article}~n\\pagestyle{empty}~n\\usepackage{prooftree}~n\\begin{document}~n~n\\begin{displaymath}~n'),
     reset_gensym,
     search_nodes(Formula, [], Sequent),
+    tell(Filename),
+    format('\\documentclass{article}~n\\pagestyle{empty}~n\\usepackage{prooftree}~n\\begin{document}~n~n\\begin{displaymath}~n'),
     print_tree('', Sequent),
     format('\\end{displaymath}~n~n\\end{document}'),
     told.

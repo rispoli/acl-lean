@@ -19,129 +19,123 @@ axiom(Γ, Δ, 'AX') :-
     I_l_a \= [].
 
 % ¬: right
-inference_rule_r(entails(Γ, [Δ, X : ~Alpha]), [entails([Y >= X, Y : Alpha | Γ], Δ)], '\\lnot R') :-
+inference_rule_r(X : ~Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, [Y >= X | Pre_ord])], '\\lnot R') :-
     gensym(y_, Y).
 
 % ∧: right
-inference_rule_r(entails(Γ, [Δ, X : Alpha and Beta]), [entails([Y >= X | Γ], [Y : Alpha | Δ]), entails([Y >= X | Γ], [Y : Beta | Δ])], '\\land R') :-
+inference_rule_r(X : Alpha and Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, [Y >= X | Pre_ord]), (Γ, [Y : Beta | Δ], Tr_Γ, Tr_Δ, [Y >= X | Pre_ord])], '\\land R') :-
     gensym(y_, Y).
 
 % ∨: right
-inference_rule_r(entails(Γ, [Δ, X: Alpha or Beta]), [entails([Y >= X | Γ], [Y : Alpha, Y : Beta | Δ])], '\\lor R') :-
+inference_rule_r(X: Alpha or Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Y : Alpha, Y : Beta | Δ], Tr_Γ, Tr_Δ, [Y >= X | Pre_ord])], '\\lor R') :-
     gensym(y_, Y).
 
 % says: right
-inference_rule_r(entails(Γ, [Δ, X : A says Alpha]), [entails([Y >= X, transition(Y, A, Z) | Γ], [Z : Alpha | Δ])], '\\mbox{{\\bf says} } R') :-
+inference_rule_r(X : A says Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Z : Alpha | Δ], [transition(Y, A, Z) | Tr_Γ], Tr_Δ, [Y >= X | Pre_ord])], '\\mbox{{\\bf says} } R') :-
     gensym(y_, Y),
     gensym(z_, Z).
 
 % →: right
-inference_rule_r(entails(Γ, [Δ, X : Alpha -> Beta]), [entails([Y >= X, Y : Alpha | Γ], [Y : Beta | Δ])], '\\rightarrow R') :-
+inference_rule_r(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alpha | Γ], [Y : Beta | Δ], Tr_Γ, Tr_Δ, [Y >= X | Pre_ord])], '\\rightarrow R') :-
     gensym(y_, Y).
 
 % ¬: left
-inference_rule_l(entails([Γ, X : ~Alpha], Δ), [entails([X : ~Alpha | Γ], [Y : Alpha | Δ])], '\\lnot L') :-
+inference_rule_l(X : ~Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord)], '\\lnot L') :-
     (
-        member(Y >= X, Γ);
+        member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Alpha, Δ).
 
 % ∧: left
-inference_rule_l(entails([Γ, X : Alpha and Beta], Δ), [entails([X : Alpha and Beta, Y : Alpha, Y : Beta | Γ], Δ)], '\\land L') :-
+inference_rule_l(X : Alpha and Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alpha, Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\land L') :-
     (
-        member(Y >= X, Γ);
+        member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Alpha, Γ),
     \+member(Y : Beta, Γ).
 
 % ∨: left
-inference_rule_l(entails([Γ, X : Alpha or Beta], Δ), [entails([X : Alpha or Beta, Y : Alpha | Γ], Δ), entails([X : Alpha or Beta, Y : Beta | Γ], Δ)], '\\lor L') :-
+inference_rule_l(X : Alpha or Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord), ([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\lor L') :-
     (
-        member(Y >= X, Γ);
+        member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Alpha, Γ),
     \+member(Y : Beta, Γ).
 
 % says: left
-inference_rule_l(entails([Γ, X : A says Alpha], Δ), [entails([transition(Y, A_, Z)], [transition(Y, A, Z)]), entails([X : A says Alpha, Z : Alpha | Γ], Δ)], '\\mbox{{\\bf says} } L') :-
+inference_rule_l(X : A says Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([], [], [transition(Y, A_, Z)], [transition(Y, A, Z)], []), ([Z : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\mbox{{\\bf says} } L') :-
     (
-        member(Y >= X, Γ);
+        member(Y >= X, Pre_ord);
         X = Y
     ),
-    member(transition(Y, A_, Z), Γ),
+    member(transition(Y, A_, Z), Tr_Γ),
     \+member(Z : Alpha, Γ).
 
 % →: left
-inference_rule_l(entails([Γ, X : Alpha -> Beta], Δ), [entails([X : Alpha -> Beta | Γ], [Y : Alpha | Δ]), entails([X : Alpha -> Beta, Y : Beta | Γ], Δ)], '\\rightarrow L') :-
+inference_rule_l(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord), ([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\rightarrow L') :-
     (
-        member(Y >= X, Γ);
+        member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Beta, Γ),
     \+member(Y : Alpha, Δ).
 
 % ATM
-inference_rule(entails([Γ, X : P], Δ), [entails([X : P, Y : P | Γ], Δ)], 'ATM') :-
+inference_rule_atm(X : P, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : P | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], 'ATM') :-
     (
-        member(Y >= X, Γ);
+        member(Y >= X, Pre_ord);
         X = Y
     ),
-    \+member(Y : P, [X : P | Γ]),
-    atom(P).
+    atom(P),
+    \+member(Y : P, Γ).
 
 % MON
-inference_rule(entails([Γ, transition(X, A and B, Y)], Δ), [entails([transition(X, A and B, Y), transition(X, A, Y), transition(X, B, Y) | Γ], Δ)], 'MON') :-
-    \+member(transition(X, A, Y), Γ),
-    \+member(transition(X, B, Y), Γ).
+inference_rule_tr_Γ(transition(X, A and B, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, [transition(X, A, Y), transition(X, B, Y) | Tr_Γ], Tr_Δ, Pre_ord)], 'MON') :-
+    \+member(transition(X, A, Y), Tr_Γ),
+    \+member(transition(X, B, Y), Tr_Γ).
 
 % CA
-inference_rule(entails([Γ, transition(X, A or B, Y)], Δ), [entails([transition(X, A or B, Y), transition(X, A, Y) | Γ], Δ), entails([transition(X, A or B, Y), transition(X, B, Y) | Γ], Δ)], 'CA') :-
-    \+member(transition(X, A, Y), Γ),
-    \+member(transition(X, B, Y), Γ).
+inference_rule_tr_Γ(transition(X, A or B, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, [transition(X, A, Y) | Tr_Γ], Tr_Δ, Pre_ord), (Γ, Δ, [transition(X, B, Y) | Tr_Γ], Tr_Δ, Pre_ord)], 'CA') :-
+    \+member(transition(X, A, Y), Tr_Γ),
+    \+member(transition(X, B, Y), Tr_Γ).
+
+% EQ:
+inference_rule_tr_Γ(transition(X, A, Y), (_, _, _, Tr_Δ, _), [([u : A], [u : B], [], [], []), ([u : B], [u : A], [], [], [])], 'EQ') :-
+    member(transition(X, B, Y), Tr_Δ).
 
 % Unit
-inference_rule(entails([Γ, transition(X, A, Y)], Δ), [entails([Y >= X, transition(X, A, Y) | Γ], Δ)], 'Unit') :-
-    \+member(Y >= X, Γ).
+inference_rule_tr_Γ(transition(X, _, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, Tr_Γ, Tr_Δ, [Y >= X | Pre_ord])], 'Unit') :-
+    \+member(Y >= X, Pre_ord).
 
 % ID
-inference_rule(entails([Γ, transition(X, A, Y)], Δ), [entails([transition(X, A, Y), Y : A | Γ], Δ)], 'ID') :-
+inference_rule_tr_Γ(transition(_, A, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : A | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], 'ID') :-
     \+member(Y : A, Γ).
 
 % CA - conv
-inference_rule(entails([Γ, transition(X, A, Y)], Δ), [entails([transition(X, A or B, Y), transition(X, A, Y) | Γ], Δ)], 'CA - conv') :-
+inference_rule_tr_Γ(transition(X, A, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, [transition(X, A or B, Y) | Tr_Γ], Tr_Δ, Pre_ord)], 'CA - conv') :-
     member(A or B says _, Γ),
-    \+member(transition(X, A or B, Y), Γ).
+    \+member(transition(X, A or B, Y), Tr_Γ).
 
 % DT
-inference_rule(entails([Γ, transition(X, A, Y)], Δ), [entails([transition(X, A, Y) | Γ], [Y : B | Δ]), entails([transition(X, A, Y), transition(X, A and B, Y) | Γ], Δ)], 'DT') :-
+inference_rule_tr_Γ(transition(X, A, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Y : B | Δ], Tr_Γ, Tr_Δ, Pre_ord), (Γ, Δ, [transition(X, A and B, Y) | Tr_Γ], Tr_Δ, Pre_ord)], 'DT') :-
     member(A and B says _, Γ),
-    \+member(transition(X, A and B, Y), Γ),
+    \+member(transition(X, A and B, Y), Tr_Γ),
     \+member(Y : B, Δ).
 
-% EQ:
-inference_rule(entails([_, transition(X, A, Y)], Δ), [entails([u : A], [u : B]), entails([u : B], [u : A])], 'EQ') :-
-    member(transition(X, B, Y), Δ).
-
-% Trans
-inference_rule(entails([Γ, E], Δ), [entails([Z >= X, E | Γ], Δ)], 'Trans') :-
-    member(Z >= Y, [E | Γ]),
-    member(Y >= X, [E | Γ]),
-    \+member(Z >= X, [E | Γ]).
-
 % C
-inference_rule(entails([Γ, E], Δ), [entails([transition(Z, A, Z), E | Γ], Δ)], 'C') :-
+inference_rule((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, [transition(Z, A, Z) | Tr_Γ], Tr_Δ, Pre_ord)], 'C') :-
     (
-		member(Z >= Y, [E | Γ]);
+        member(Z >= Y, Pre_ord);
         Y = Z
     ),
-    member(transition(_, A, Y), [E | Γ]),
-    \+member(transition(Z, A, Z), [E | Γ]).
+    member(transition(_, A, Y), Tr_Γ),
+    \+member(transition(Z, A, Z), Tr_Γ).
 
-% VD
-inference_rule(entails([Γ, E], Δ), [entails([transition(X, A, Z), E | Γ], Δ)], 'VD') :-
-    member(Y >= X, [E | Γ]),
-    member(transition(Y, A, Z), [E | Γ]),
-    \+member(transition(X, A, Z), [E | Γ]).
+% Trans
+inference_rule((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, Tr_Γ, Tr_Δ, [Z >= X | Pre_ord])], 'Trans') :-
+    member(Z >= Y, Pre_ord),
+    member(Y >= X, Pre_ord),
+    \+member(Z >= X, Pre_ord).
