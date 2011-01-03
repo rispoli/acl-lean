@@ -62,10 +62,6 @@ print_sequent(Indentation, (Γ_, Δ_, Tr_Γ, Tr_Δ, Pre_ord)) :-
     stringConcat([Indentation, Γ_s_j, ' \\Rightarrow ', Δ_s_j, '~n'], '', Sequent_s),
     format(Sequent_s).
 
-print_tree(Indentation, ([S, []], '')) :-
-    string_concat(Indentation, '\t', Deeper_indentation),
-    print_sequent(Deeper_indentation, S).
-
 print_tree(Indentation, ([Conclusion, Premises], Rule)) :-
     format('~w\\prooftree~n', Indentation),
     string_concat(Indentation, '\t', Deeper_indentation),

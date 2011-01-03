@@ -8,23 +8,22 @@ expand_premises([H | T], Used, [T1 | T2]) :-
 
 expand((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises_tree], Rule)) :-
     member(X, Γ),
-    inference_rule_atm(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule),
+    inference_rule_atm(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), !,
     expand_premises(Premises, Used, Premises_tree).
 
 expand((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises_tree], Rule)) :-
     member(X, Tr_Γ),
-    inference_rule_tr_Γ(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule),
+    inference_rule_tr_Γ(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), ((Rule \= 'EQ') -> !; true),
     expand_premises(Premises, Used, Premises_tree).
 
 expand(F, Used, ([F, Premises_tree], Rule)) :-
-    inference_rule(F, Premises, Rule),
+    inference_rule(F, Premises, Rule), !,
     expand_premises(Premises, Used, Premises_tree).
-
-%expand(F, _, ([F, []], '')). %:- !.
 
 expand_l((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises_tree], Rule)) :-
     subtract(Γ, Used, Γ_not_used),
     member(X, Γ_not_used),
+    %inference_rule_l(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), ((Rule \= '\\mbox{{\\bf says} } L') -> !; true), % Why, oh why?
     inference_rule_l(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule),
     expand_premises(Premises, [X | Used], Premises_tree).
 
@@ -33,14 +32,14 @@ expand_l(F, Used, T) :-
 
 expand_r((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises_tree], Rule)) :-
     select(X, Δ, Δ_minus_X),
-    inference_rule_r(X, (Γ, Δ_minus_X, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule),
+    inference_rule_r(X, (Γ, Δ_minus_X, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), !,
     expand_premises(Premises, Used, Premises_tree).
 
 expand_r(F, Used, T) :-
     expand_l(F, Used, T).
 
 search_nodes((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), _, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), []], Rule)) :-
-    axiom(Γ, Δ, Rule).
+    axiom(Γ, Δ, Rule), !.
 
 search_nodes(F, Used, T) :-
     expand_r(F, Used, T).
