@@ -23,7 +23,6 @@ expand(F, Used, ([F, Premises_tree], Rule)) :-
 expand_l((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises_tree], Rule)) :-
     subtract(Γ, Used, Γ_not_used),
     member(X, Γ_not_used),
-    %inference_rule_l(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), ((Rule \= '\\mbox{{\\bf says} } L') -> !; true), % Why, oh why?
     inference_rule_l(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule),
     expand_premises(Premises, [X | Used], Premises_tree).
 
