@@ -10,7 +10,7 @@ labelled_atm(_ : P) :-
     atom(P).
 
 axiom(Γ, _, 'AX_\\bot') :-
-    member(_ : '\\bot', Γ).
+    member(_ : bot, Γ).
 
 axiom(Γ, Δ, 'AX') :-
     list_to_set(Γ, G), list_to_set(Δ, D),
