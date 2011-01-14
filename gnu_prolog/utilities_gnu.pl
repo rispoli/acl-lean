@@ -31,12 +31,3 @@ gensym(Base, Atom) :-
 	flag(Key, N, N+1),
 	number_atom(N, NA),
 	atom_concat(Base, NA, Atom), !.
-
-subtract([], _, []) :- !.
-
-subtract([H | T], D, R) :-
-	memberchk(H, D), !,
-	subtract(T, D, R).
-
-subtract([H | T], D, [H | R]) :-
-	subtract(T, D, R).
