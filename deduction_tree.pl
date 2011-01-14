@@ -25,10 +25,9 @@ expand(F, Used, ([F, Premises_tree], Rule)) :-
     expand_premises(Premises, Used, Premises_tree).
 
 expand_l((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises_tree], Rule)) :-
-    subtract(Γ, Used, Γ_not_used),
-    member(X, Γ_not_used),
-    inference_rule_l(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule),
-    expand_premises(Premises, [X | Used], Premises_tree).
+    member(X, Γ),
+	inference_rule_l(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, Used_, Premises, Rule), (member(Rule, ['\\lnot L', '\\lor L', '\\land L']) -> !; true),
+    expand_premises(Premises, Used_, Premises_tree).
 
 expand_l(F, Used, T) :-
     expand(F, Used, T).

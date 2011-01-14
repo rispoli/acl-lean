@@ -40,48 +40,53 @@ inference_rule_r(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alph
     gensym(y_, Y).
 
 % ¬: left
-inference_rule_l(X : ~Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord)], '\\lnot L') :-
+inference_rule_l(X : ~Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, [(X : ~Alpha, Y) | Used], [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord)], '\\lnot L') :-
     (
         member(Y >= X, Pre_ord);
         X = Y
     ),
-    \+member(Y : Alpha, Δ).
+    \+member(Y : Alpha, Δ),
+    \+member((X : ~Alpha, Y), Used).
 
 % ∧: left
-inference_rule_l(X : Alpha and Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alpha, Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\land L') :-
+inference_rule_l(X : Alpha and Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, [(X : Alpha and Beta, Y) | Used], [([Y : Alpha, Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\land L') :-
     (
         member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Alpha, Γ),
-    \+member(Y : Beta, Γ).
+    \+member(Y : Beta, Γ),
+    \+member((X : Alpha and Beta, Y), Used).
 
 % ∨: left
-inference_rule_l(X : Alpha or Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord), ([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\lor L') :-
+inference_rule_l(X : Alpha or Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, [(X : Alpha or Beta, Y) | Used], [([Y : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord), ([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\lor L') :-
     (
         member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Alpha, Γ),
-    \+member(Y : Beta, Γ).
+    \+member(Y : Beta, Γ),
+    \+member((X : Alpha or Beta, Y), Used).
 
 % says: left
-inference_rule_l(X : A says Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([], [], [transition(Y, A_, Z)], [transition(Y, A, Z)], []), ([Z : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\mbox{{\\bf says} } L') :-
-    (
+inference_rule_l(X : A says Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, [(X : A says Alpha, Y, Z) | Used], [([], [], [transition(Y, A_, Z)], [transition(Y, A, Z)], []), ([Z : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\mbox{{\\bf says} } L') :-
+    !, (
         member(Y >= X, Pre_ord);
         X = Y
     ),
     member(transition(Y, A_, Z), Tr_Γ),
-    \+member(Z : Alpha, Γ).
+    \+member(Z : Alpha, Γ),
+    \+member((X : A says  Alpha, Y, Z), Used).
 
 % →: left
-inference_rule_l(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord), ([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\rightarrow L') :-
-    (
+inference_rule_l(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, [(X : Alpha -> Beta, Y) | Used], [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord), ([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\rightarrow L') :-
+    !, (
         member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Beta, Γ),
-    \+member(Y : Alpha, Δ).
+    \+member(Y : Alpha, Δ),
+    \+member((X : Alpha -> Beta, Y), Used).
 
 % ATM
 inference_rule_atm(X : P, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : P | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], 'ATM') :-
