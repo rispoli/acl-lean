@@ -76,7 +76,7 @@ inference_rule_l(X : A says Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, [(X : 
     ),
     member(transition(Y, A_, Z), Tr_Γ),
     \+member(Z : Alpha, Γ),
-    \+member((X : A says  Alpha, Y, Z), Used).
+    \+member((X : A says Alpha, Y, Z), Used).
 
 % →: left
 inference_rule_l(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, [(X : Alpha -> Beta, Y) | Used], [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord), ([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\rightarrow L') :-
