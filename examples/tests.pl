@@ -14,3 +14,5 @@
 ?- latexify(([x : (('A' and 'B') says '\\varphi') -> '\\varphi', x : ('A' and 'B') says '\\varphi'], [x : '\\varphi'], [], [], []), 'examples/v09.tex').
 ?- latexify(([x : 'A' says '\\varphi'], [x : ('A' and 'B') says '\\varphi'], [], [], []), 'examples/v10.tex').
 ?- latexify(([x : (a_1 says suu_1) -> wpu_1, x: a_2 says suu_1], [x : (a_1 and a_2) says wpu_1], [], [], []), 'examples/v11.tex').
+?- latexify(([x : 'A' says ('\\alpha' -> '\\beta'), x : 'B' says '\\alpha'], [x : 'A' and 'B' says '\\beta'], [], [], []), 'examples/v12.tex').
+?- latexify(([x : 'A' says '\\alpha' -> '\\beta', x : 'A' says '\\alpha'], [x : 'A' says '\\beta'], [], [], []), 'examples/v13.tex').

@@ -11,9 +11,13 @@ expand((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord),
     inference_rule_atm(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), !,
     expand_premises(Premises, Used, Premises_tree).
 
+expand(F, Used, ([F, Premises_tree], Rule)) :-
+    inference_rule_EQ(F, Premises, Rule),
+    expand_premises(Premises, Used, Premises_tree).
+
 expand((Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Used, ([(Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises_tree], Rule)) :-
     member(X, Tr_Γ),
-    inference_rule_tr_Γ(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), ((Rule \= 'EQ') -> !; true),
+    inference_rule_tr_Γ(X, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Premises, Rule), !,
     expand_premises(Premises, Used, Premises_tree).
 
 expand(F, Used, ([F, Premises_tree], Rule)) :-

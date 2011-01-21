@@ -92,6 +92,11 @@ inference_rule_atm(X : P, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : P | Γ], Δ, T
     atom(P),
     \+member(Y : P, Γ).
 
+% EQ:
+inference_rule_EQ((_, _, Tr_Γ, Tr_Δ, _), [([u : A], [u : B], [], [], []), ([u : B], [u : A], [], [], [])], 'EQ') :-
+    member(transition(X, A, Y), Tr_Γ),
+    member(transition(X, B, Y), Tr_Δ).
+
 % MON
 inference_rule_tr_Γ(transition(X, A and B, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, [transition(X, A, Y), transition(X, B, Y) | Tr_Γ], Tr_Δ, Pre_ord)], 'MON') :-
     \+member(transition(X, A, Y), Tr_Γ),
@@ -101,10 +106,6 @@ inference_rule_tr_Γ(transition(X, A and B, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord),
 inference_rule_tr_Γ(transition(X, A or B, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, [transition(X, A, Y) | Tr_Γ], Tr_Δ, Pre_ord), (Γ, Δ, [transition(X, B, Y) | Tr_Γ], Tr_Δ, Pre_ord)], 'CA') :-
     \+member(transition(X, A, Y), Tr_Γ),
     \+member(transition(X, B, Y), Tr_Γ).
-
-% EQ:
-inference_rule_tr_Γ(transition(X, A, Y), (_, _, _, Tr_Δ, _), [([u : A], [u : B], [], [], []), ([u : B], [u : A], [], [], [])], 'EQ') :-
-    member(transition(X, B, Y), Tr_Δ).
 
 % Unit
 inference_rule_tr_Γ(transition(X, _, Y), (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [(Γ, Δ, Tr_Γ, Tr_Δ, [Y >= X | Pre_ord])], 'Unit') :-
