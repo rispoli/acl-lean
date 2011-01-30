@@ -77,8 +77,7 @@ print_tree(Indentation, ([Conclusion, Premises], Rule)) :-
     format('~w\\endprooftree~n', Indentation).
 
 latexify(Formula, Filename) :-
-    reset_gensym,
-    search_nodes(Formula, [], Sequent),
+    prove(Formula, Sequent),
     tell(Filename),
     format('\\documentclass{article}~n\\pagestyle{empty}~n\\usepackage{prooftree}~n\\begin{document}~n~n\\begin{displaymath}~n'),
     print_tree('', Sequent),

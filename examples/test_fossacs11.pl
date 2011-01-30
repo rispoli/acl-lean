@@ -5,4 +5,4 @@
 %     delete_file_1 = df_1
 %            user_1 = u_1
 
-?- latexify(([], [u : ((a_1 says (suu_1 -> wpu_1)) and (a_2 says suu_1) and (((a_1 and a_2) says df_1) -> df_1) and (a_1 and a_2 says ((wpu_1 and (u_1 says df_1)) -> df_1)) and (u_1 says df_1)) -> df_1], [], [], []), 'examples/fossacs11_short.tex').
+?- latexify(((a_1 says (suu_1 -> wpu_1)) and (a_2 says suu_1) and (((a_1 and a_2) says df_1) -> df_1) and (a_1 and a_2 says ((wpu_1 and (u_1 says df_1)) -> df_1)) and (u_1 says df_1)) -> df_1, 'examples/fossacs11_short.tex').
