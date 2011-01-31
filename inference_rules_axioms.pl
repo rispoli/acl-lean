@@ -40,13 +40,15 @@ inference_rule_r(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : Alph
     gensym(y_, Y).
 
 % ¬: left
-inference_rule_l(X : ~Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), _, Used, [(X : ~Alpha, Y) | Used], [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord)], '\\lnot L') :-
+inference_rule_l(X : ~Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Depth, Used, [(X : ~Alpha, Y) | Used], [(Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord)], '\\lnot L') :-
     (
         member(Y >= X, Pre_ord);
         X = Y
     ),
     \+member(Y : Alpha, Δ),
-    \+member((X : ~Alpha, Y), Used).
+    \+member((X : ~Alpha, Y), Used),
+    max_distance(Pre_ord, u, Y, Distance),
+    Distance =< Depth.
 
 % ∧: left
 inference_rule_l(X : Alpha and Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), _, Used, [(X : Alpha and Beta, X) | Used], [([X : Alpha, X : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\land L') :-
@@ -84,10 +86,7 @@ inference_rule_l(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Depth, Used
 
 % ATM
 inference_rule_atm(X : P, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), [([Y : P | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], 'ATM') :-
-    (
-        member(Y >= X, Pre_ord);
-        X = Y
-    ),
+    member(Y >= X, Pre_ord),
     atom(P),
     \+member(Y : P, Γ).
 
