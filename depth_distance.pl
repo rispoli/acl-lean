@@ -1,11 +1,15 @@
+depth(~ T, D) :-
+    !, depth(T, DT),
+    D is DT + 1.
+
 depth(T, 1) :-
     atom(T), !.
 
 depth(T, D) :-
-    T =.. [_, L, R],
+    T =.. [F, L, R],
     depth(L, DL),
     depth(R, DR),
-    D is max(DL, DR) + 1.
+    (member(F, [says, ->]) -> D is max(DL, DR) + 1; D is max(DL, DR)).
 
 distance([], _, _, _) :-
     !, fail.

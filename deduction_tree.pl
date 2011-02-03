@@ -1,5 +1,5 @@
-:- [depth_distance].
 :- [inference_rules_axioms].
+:- [depth_distance].
 
 expand_premises([], _, _, []).
 
@@ -48,9 +48,8 @@ search_nodes(F, Depth, Used, T) :-
     expand_r(F, Depth, Used, T).
 
 prove(F, T) :-
-    depth(F, D_),
+    depth(F, D),
     reset_gensym,
-    D is D_ - 1,
     search_nodes(([], [u : F], [], [], []), D, [], T).
 
 prove(F) :-
