@@ -61,14 +61,16 @@ inference_rule_l(X : Alpha or Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), _, Used, [(
     \+member((X : Alpha or Beta, X), Used).
 
 % says: left
-inference_rule_l(X : A says Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), _, Used, [(X : A says Alpha, Y, Z) | Used], [([], [], [transition(Y, A_, Z)], [transition(Y, A, Z)], []), ([Z : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\mbox{{\\bf says} } L') :-
+inference_rule_l(X : A says Alpha, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Depth, Used, [(X : A says Alpha, Y, Z) | Used], [([([], [], [transition(Y, A_, Z)], [transition(Y, A, Z)], []), Premises_tree], Rule), ([Z : Alpha | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord)], '\\mbox{{\\bf says} } L') :-
     !, (
         member(Y >= X, Pre_ord);
         X = Y
     ),
     member(transition(Y, A_, Z), Tr_Γ),
     \+member(Z : Alpha, Γ),
-    \+member((X : A says Alpha, Y, Z), Used).
+    \+member((X : A says Alpha, Y, Z), Used),
+    inference_rule_EQ(([], [], [transition(Y, A_, Z)], [transition(Y, A, Z)], []), Premises, Rule),
+    expand_premises(Premises, Depth, Used, Premises_tree).
 
 % →: left
 inference_rule_l(X : Alpha -> Beta, (Γ, Δ, Tr_Γ, Tr_Δ, Pre_ord), Depth, Used, [(X : Alpha -> Beta, Y) | Used], [([Y : Beta | Γ], Δ, Tr_Γ, Tr_Δ, Pre_ord), (Γ, [Y : Alpha | Δ], Tr_Γ, Tr_Δ, Pre_ord)], '\\rightarrow L') :-
