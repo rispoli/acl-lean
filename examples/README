@@ -1,0 +1,10 @@
+This directory contains the examples reported in the system description.
+
+[test_name].pl: calls the predicate prove(.) over example "test_name";
+[test_name]_l.pl: calls the predicate latexify(., 'file.tex') over example
+                  "test_name" and writes the proof in the supplied file.
+
+gen_image.sh: a shell script to compile the .tex produced by latexify to a
+              .png image. Requires Paul Taylor's Proof Trees
+              (http://www.ctan.org/tex-archive/macros/generic/proofs/taylor/)
+              and Charles Plager's tex2png.pl (http://www-cdf.fnal.gov/~cplager/latex/).

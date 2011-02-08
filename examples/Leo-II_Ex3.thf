@@ -1,18 +1,13 @@
-%include('ICL_k.ax').
-%include('ICL_s4.ax').
-
-%
-%-----------------------------------------------------------
-% File		:	ICL_K.ax
-% Domain	:	ICL Logic and its translation into Modal Logic (which
-%                              is itself modelled in simple type theory; see [2])
-%
+% This is an encoding of problem Ex3.pl into Leo-II.
+% The encoding has been proposed in the following paper:
+% C. Benzmüller, Automating Access Control Logic in Simple Type Theory via LEO-II.
+% Emerging Challenges for Security, Privacy and Trust, 24th IFIP TC 11 International Information Security Conference,
+% SEC 2009, Pafos, Cyprus, May 18-20, 2009,
+% Proceedings, IFIP vol. 297, pp. 387-398, 2009. © Springer. ISBN 978-3-642-01243-3
 
 %%%%%%%%%%%%%%%%%
 %% Multimodal-Logic%%
 %%%%%%%%%%%%%%%%%
-
-%---This formalization of multimodal logic follows the ideas presented in [2]
 
 %--mfalse corresponds to exmptyset (of type $i)
 thf(mfalse_decl, type, (mfalse: $i > $o)).
@@ -102,11 +97,6 @@ thf(icl_princ_decl, type, ( icl_princ: ($i > $o) > ($i > $o))).
 thf(icl_princ_def, definition, (icl_princ := (^ [P: $i > $o] : P))).
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%We introduce the logical connectives of ICL and map them to moda%
-%logic expressions as suggested in [1]                                               %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %---ICL and conncetive
 thf(icl_and_decl, type, (
      icl_and: ($i > $o) > ($i > $o) > ($i > $o))).
@@ -156,9 +146,9 @@ thf(icl_says_def, definition,
      ( icl_says
        := (^ [A: $i > $o, S: $i > $o] : (mbox @ rel @ (mor @ A @ S))))).
 
-%%%%%%%%%%%%%%%%%%%%%%%
-% ICL notions of validity wrt. K  %
-%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Notions of validity wrt. K  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %--An ICL formula is K- valid if its translation into modal logic is valid
 thf(iclval_decl, type, (
@@ -170,45 +160,12 @@ thf(icl_s4_valid, definition,
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%--We add the reflexivity and the trasitivity axiom to obtain S4
+thf(refl_axiom, axiom,
+      (! [A: ($i > $o) ]: (mvalid @ (mimpl @ (mbox @ rel @ A) @ A)))).
 
-%thf(refl_axiom, axiom,
-%      (! [A: ($i > $o) ]: (mvalid @ (mimpl @ (mbox @ rel @ A) @ A)))).
-
-%thf(trans_axiom, axiom,
-%    (! [B: ($i > $o)]: (mvalid @ (mimpl @ (mbox @ rel @ B) @
-% 	      	       	       	       	    (mbox @ rel @ (mbox @ rel @ B)))))).
-
-
-
-thf(mreflexive_type,type,(
-   mreflexive: ( $i > $i > $o ) > $o )).
-
-thf(mreflexive,definition,
-   ( mreflexive
-   = ( ^ [R: $i > $i > $o] :
-       ! [S: $i] :
-         ( R @ S @ S ) ) )).
-
-
-thf(mtransitive_type,type,(
-   mtransitive: ( $i > $i > $o ) > $o )).
-
-thf(mtransitive,definition,
-   ( mtransitive
-   = ( ^ [R: $i > $i > $o] :
-       ! [S: $i,T: $i,U: $i] :
-         ( ( ( R @ S @ T )
-           & ( R @ T @ U ) )
-        => ( R @ S @ U ) ) ) )).
-
-
-thf(refl_axiom,axiom,
-    ( mreflexive @ rel ) ).
-
-thf(trans_axiom,axiom,
-    ( mtransitive @ rel ) ).
-
+thf(trans_axiom, axiom,
+    (! [B: ($i > $o)]: (mvalid @ (mimpl @ (mbox @ rel @ B) @
+					   (mbox @ rel @ (mbox @ rel @ B)))))).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -258,7 +215,6 @@ thf(ax3, axiom,
           (iclval @
              (icl_says @ (icl_princ @ bob)
 	     	       	    @ (icl_impl @ alice @ bob)))).
-
 %---(alice says deletefile1)
 thf(ax4, axiom,
 	 (iclval @ (icl_says @ (icl_princ @ alice) @ (icl_atom @ deletefile1)))).

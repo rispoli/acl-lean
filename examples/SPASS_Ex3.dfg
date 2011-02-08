@@ -2,10 +2,9 @@ begin_problem(problem_name).
 
 list_of_descriptions.
 
-	name({*Problem's name*}).
+	name({*Encoding of Ex3.pl into SPASS*}).
 	author({*Author*}).
-	status(unsatisfiable). % or satisfiable or unknown
-	description({*Description*}).
+	description({*This is an encoding via translation into FOL of the problem Ex3.p into DFG syntax*}).
 
 end_of_list.
 
@@ -46,10 +45,7 @@ list_of_formulae(axioms).
 	% Closed modality
 	formula(forall([world(t), world(s), world(z), principal(a)], implies(and(leq(t, s), R(a, s, z)), R(a, t, z))), 5).
 
-	% C4
-	%formula(forall([world(x), world(y), principal(a)], implies(R(a, x, y), exists([world(z)], and(R(a, x, z), R(a, z, y))))), 6).
-
-	% We want something more than C4
+	% Axiom C
 	formula(forall([world(x), world(y), principal(a)], implies(R(a, x, y), R(a, y, y))), 6).
 
 	% Unit
@@ -57,9 +53,18 @@ list_of_formulae(axioms).
 
 	%%% / %%%
 
+	%Encoding of the formulas of the problems:
+
+	%admin says df1 -> df1
 	formula(forall([world(w14)], implies(and(leq(0, w14), forall([world(w13)], implies(R(admin, w14, w13), I(df1, w13)))), I(df1, w14))), 8).
+
+	%admin says ((bob says df1) -> df1)
 	formula(forall([world(w17)], implies(R(admin, 0, w17), forall([world(w16)], implies(and(leq(w17, w16), forall([world(w15)], implies(R(bob, w16, w15), I(df1, w15)))), I(df1, w16))))), 9).
+
+	%bob says ((alice says df1) -> (bob says df1))
 	formula(forall([world(w21)], implies(R(bob, 0, w21), forall([world(w20)], implies(and(leq(w21, w20), forall([world(w18)], implies(R(alice, w20, w18), I(df1, w18)))), forall([world(w19)], implies(R(bob, w20, w19), I(df1, w19))))))), 10).
+
+	%alice says df1
 	formula(forall([world(w22)], implies(R(alice, 0, w22), I(df1, w22))), 11).
 
 end_of_list.
