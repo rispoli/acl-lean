@@ -1,0 +1,268 @@
+%include('ICL_k.ax').
+%include('ICL_s4.ax').
+
+%
+%-----------------------------------------------------------
+% File		:	ICL_K.ax
+% Domain	:	ICL Logic and its translation into Modal Logic (which
+%                              is itself modelled in simple type theory; see [2])
+%
+
+%%%%%%%%%%%%%%%%%
+%% Multimodal-Logic%%
+%%%%%%%%%%%%%%%%%
+
+%---This formalization of multimodal logic follows the ideas presented in [2]
+
+%--mfalse corresponds to exmptyset (of type $i)
+thf(mfalse_decl, type, (mfalse: $i > $o)).
+
+thf(mfalse_def, definition, (mfalse := (^ [X: $i] : $false))).
+
+%--mtrue corresponds to the universal set (of type $i)
+thf(mtrue_decl,type, (mtrue :$i > $o)).
+
+thf(mtrue_def, definition, (mtrue := (^ [X: $i] : $true))).
+
+%--mnot corresponds to set complement
+thf(mnot_decl, type, (mnot: ($i > $o) > $i > $o)).
+
+thf(mnot_def, definition, (mnot := (^ [X: $i > $o, U: $i] : ~ ( X @ U)))).
+
+%--mor corresponds to set union
+thf(mor_decl, type, ( mor: ($i > $o) > ($i > $o) > $i > $o)).
+
+thf(mor_def, definition, ( mor := (^ [X: $i > $o, Y: $i > $o, U: $i] :
+	 	       	      	 ( ( X @ U) | (Y @ U) ) ) ) ).
+
+%--mand corresponds to set intersection
+thf(mand_decl, type, (mand: ($i > $o) > ($i > $o) > $i > $o)).
+
+thf(mand_def, definition, (mand := ( ^ [X: $i > $o, Y: $i > $o, U: $i]: 
+                                ( ( X @ U) & (Y @ U) ) ) ) ).
+
+%--mimpl defined via mno and mor
+thf(mimpl_decl, type, (mimpl:  ($i > $o) > ($i > $o) > $i > $o)).
+
+thf(mimpl_def, definition, (mimpl := (^ [U: $i > $o, V: $i > $o] : (mor @ (mnot @ U) @ V)))).
+
+%--miff defined via mand and mimpl
+thf(miff_decl, type, ( miff: ($i > $o) > ($i > $o) > $i > $o)).
+
+thf(miff_def, definition, (miff 
+				:= (^ [U: $i > $o, V:  $i > $o]:
+				        ( mand @ ( mimpl @ U @ V) @ ( mimpl @ V @ U))))).
+
+%--mbox
+thf(mbox_decl,type, (mbox: ($i > $i > $o) > ($i > $o) > $i > $o)).
+
+thf(mbox_def, definition, ( mbox := (^ [R: $i > $i > $o, P: $i > $o, X: $i] : 
+	  	      	     	       	       ! [Y: $i] : 
+ 					       	(( R @ X @ Y) => (P @ Y))))).
+
+%--mdia
+thf(mdia_decl, type, (
+     mdia: ($i > $i > $o) > ($i > $o) > $i > $o)).
+
+thf(mdia_def, definition, ( mdia 
+				  := ( ^ [R: $i > $i > $o, P: $i > $o, X: $i] :
+				    ? [Y : $i] :
+				    ( ( R @ X @ Y)
+				     & ( P @ Y))))).
+
+%---Validity of multimodal logic formula (in logic K) can be now
+% encoded as
+
+thf(mvalid_decl, type, ( mvalid: ($i > $o) > $o)).
+
+thf(mvalid_def, definition, (mvalid
+				    := ( ^ [P: $i > $o] :
+				    ! [W: $i] :
+				     ( P @ W )))).
+
+%%%%%%%%%%%%%%%%
+% ICL LOGIC
+%%%%%%%%%%%%%%%%
+
+%--The encoding of ICL logic employs only one accessibility relation
+% which we introduce here as a constant "rel"; we don't need multimodal logic
+
+thf(rel, type, ( rel: $i > $i > $o)).
+
+%--ICL logic distinguished between atoms and principals; for this we
+%--introduce a predicate, "icl_atom" ...
+thf(icl_atom_decl, type, ( icl_atom: ($i > $o) > ($i > $o))).
+
+thf(icl_atom, definition,
+     (icl_atom := ( ^ [P: $i > $o] : (mbox @ rel @ P)))).
+
+%--- ... and also a predicate "icl_princ"
+thf(icl_princ_decl, type, ( icl_princ: ($i > $o) > ($i > $o))).
+
+thf(icl_princ_def, definition, (icl_princ := (^ [P: $i > $o] : P))).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%We introduce the logical connectives of ICL and map them to moda%
+%logic expressions as suggested in [1]                                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%---ICL and conncetive
+thf(icl_and_decl, type, (
+     icl_and: ($i > $o) > ($i > $o) > ($i > $o))).
+
+thf(icl_and_def, definition, 
+    (icl_and 
+    := (^ [A: $i > $o, B: $i > $o]: (mand @ A @ B)))).
+
+%---ICL or conncetive
+thf(icl_or_decl, type, (
+     icl_or:   ($i > $o) > ($i > $o) > ($i > $o))).
+
+thf(icl_or_def, definition, 
+      (icl_or 
+      := (^ [A: $i > $o, B: $i > $o]: (mor @ A @ B)))).
+
+%---ICL implication connective
+thf(icl_impl_decl, type, (
+     icl_impl: ($i > $o) > ($i > $o) > ($i > $o))).
+
+thf(icl_impl_def, definition, (
+	      icl_impl
+	      := (^ [A: $i > $o, B: $i > $o] : (mbox @ rel @ (mimpl @ A @ B))))).
+
+%--ICL ture conncetive
+thf(icl_true_decl, type, (
+     icl_true: ($i > $o))).
+
+thf(icl_true_def, definition,
+     ( icl_true
+     := mtrue )).
+
+
+%--ICL false conncetive
+thf(icl_false_decl, type, (
+      icl_false: ($i > $o))).
+
+thf(icl_false_def, definition, (
+      icl_false
+      := mfalse)).
+
+%--ICL says connective
+thf(icl_says_decl, type, (
+     icl_says: ($i > $o) > ($i > $o) > ($i > $o))).
+
+thf(icl_says_def, definition,
+     ( icl_says
+       := (^ [A: $i > $o, S: $i > $o] : (mbox @ rel @ (mor @ A @ S))))).
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% ICL notions of validity wrt. K  %
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%--An ICL formula is K- valid if its translation into modal logic is valid
+thf(iclval_decl, type, (
+     iclval: ($i > $o) > $o)).
+
+thf(icl_s4_valid, definition,
+      ( iclval 
+      := ( ^[X: $i > $o]: (mvalid @ X)))).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--We add the reflexivity and the trasitivity axiom to obtain S4
+
+%thf(refl_axiom, axiom,
+%      (! [A: ($i > $o) ]: (mvalid @ (mimpl @ (mbox @ rel @ A) @ A)))).
+
+%thf(trans_axiom, axiom,
+%    (! [B: ($i > $o)]: (mvalid @ (mimpl @ (mbox @ rel @ B) @
+% 	      	       	       	       	    (mbox @ rel @ (mbox @ rel @ B)))))).
+
+
+
+thf(mreflexive_type,type,(
+   mreflexive: ( $i > $i > $o ) > $o )).
+
+thf(mreflexive,definition,
+   ( mreflexive
+   = ( ^ [R: $i > $i > $o] :
+       ! [S: $i] :
+         ( R @ S @ S ) ) )).
+
+
+thf(mtransitive_type,type,(
+   mtransitive: ( $i > $i > $o ) > $o )).
+
+thf(mtransitive,definition,
+   ( mtransitive
+   = ( ^ [R: $i > $i > $o] :
+       ! [S: $i,T: $i,U: $i] :
+         ( ( ( R @ S @ T )
+           & ( R @ T @ U ) )
+        => ( R @ S @ U ) ) ) )).
+
+
+thf(refl_axiom,axiom,
+    ( mreflexive @ rel ) ).
+
+thf(trans_axiom,axiom,
+    ( mtransitive @ rel ) ).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%---The principals
+
+thf(admin, type, (
+			  admin: $i > $o)).
+
+thf(bob, type, (
+     bob : $i > $o)).
+
+thf(alice, type, (
+      alice: $i > $o)).
+
+%---The atomic propositions
+
+thf(deletefile1, type, (
+      deletefile1: $i > $o)).
+
+%---The axioms of the example problem
+%---(admin says deletefile 1) => deletefile1
+
+thf(ax1, axiom,
+      (iclval @
+          (icl_impl @ (icl_says @ (icl_princ @ admin) @ (icl_atom @ deletefile1))
+	  	         @ (icl_atom @ deletefile1)))).
+
+%---(admin says ((bob says deletefile1) => deletefile1))
+thf(ax2, axiom,
+      (iclval @
+         (icl_says @ (icl_princ @ admin)
+	 	        @ (icl_impl @ (icl_says @ (icl_princ @ bob)
+			  	      		  	     @ (icl_atom @ deletefile1))
+					  @ (icl_atom @ deletefile1))))).
+
+%---(bob says (alice says deletefile 1 -> bob says deletefile1)
+%thf(ax3, axiom,
+%	  (iclval @ 
+%	     (icl_says @ (icl_princ @ bob) 
+%	                    @ (icl_impl @ (icl_says @ (icl_princ @ alice)
+%			      		  	      		 @ (icl_atom @ deletefile1))
+%					       @ (icl_says @ (icl_princ @ bob)
+%					       	 	         @ (icl_atom @ deletefile1)))))).
+
+%--(bob says ( alice speaks_for bob)
+thf(ax3, axiom,
+          (iclval @
+             (icl_says @ (icl_princ @ bob)
+	     	       	    @ (icl_impl @ alice @ bob)))).
+
+%---(alice says deletefile1)
+thf(ax4, axiom,
+	 (iclval @ (icl_says @ (icl_princ @ alice) @ (icl_atom @ deletefile1)))).
+
+%--We prove: It holds deletefile1
+thf(ex2, conjecture, 
+             (iclval @ (icl_atom @ deletefile1))).

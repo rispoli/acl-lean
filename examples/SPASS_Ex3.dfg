@@ -1,0 +1,73 @@
+begin_problem(problem_name).
+
+list_of_descriptions.
+
+	name({*Problem's name*}).
+	author({*Author*}).
+	status(unsatisfiable). % or satisfiable or unknown
+	description({*Description*}).
+
+end_of_list.
+
+list_of_symbols.
+
+	functions[(0, 0), (df1, 0), (admin, 0), (bob, 0), (alice, 0)].
+	predicates[(I, 2), (R, 3), (leq, 2)].
+	sorts[atom, principal, world].
+
+end_of_list.
+
+list_of_declarations.
+
+	atom(df1).
+	principal(admin).
+	principal(bob).
+	principal(alice).
+	world(0).
+
+end_of_list.
+
+list_of_formulae(axioms).
+
+	%%% Axiomatization of partial order relation %%%
+
+	% Reflexivity
+	formula(forall([world(x)], leq(x, x)), 1).
+
+	% Antisimmetry
+	formula(forall([world(x), world(y)], implies(and(leq(x, y), leq(y, x)), equal(x, y))), 2).
+
+	% Transitivity
+	formula(forall([world(x), world(y), world(z)], implies(and(leq(x, y), leq(y, z)), leq(x, z))), 3).
+
+	% Closed assignment
+	formula(forall([atom(q1), world(t), world(s)], implies(and(I(q1, t), leq(t, s)), I(q1, s))), 4).
+
+	% Closed modality
+	formula(forall([world(t), world(s), world(z), principal(a)], implies(and(leq(t, s), R(a, s, z)), R(a, t, z))), 5).
+
+	% C4
+	%formula(forall([world(x), world(y), principal(a)], implies(R(a, x, y), exists([world(z)], and(R(a, x, z), R(a, z, y))))), 6).
+
+	% We want something more than C4
+	formula(forall([world(x), world(y), principal(a)], implies(R(a, x, y), R(a, y, y))), 6).
+
+	% Unit
+	formula(forall([world(x), world(y), principal(a)], implies(R(a, x, y), leq(x, y))), 7).
+
+	%%% / %%%
+
+	formula(forall([world(w14)], implies(and(leq(0, w14), forall([world(w13)], implies(R(admin, w14, w13), I(df1, w13)))), I(df1, w14))), 8).
+	formula(forall([world(w17)], implies(R(admin, 0, w17), forall([world(w16)], implies(and(leq(w17, w16), forall([world(w15)], implies(R(bob, w16, w15), I(df1, w15)))), I(df1, w16))))), 9).
+	formula(forall([world(w21)], implies(R(bob, 0, w21), forall([world(w20)], implies(and(leq(w21, w20), forall([world(w18)], implies(R(alice, w20, w18), I(df1, w18)))), forall([world(w19)], implies(R(bob, w20, w19), I(df1, w19))))))), 10).
+	formula(forall([world(w22)], implies(R(alice, 0, w22), I(df1, w22))), 11).
+
+end_of_list.
+
+list_of_formulae(conjectures).
+
+	formula(I(df1, 0), 12).
+
+end_of_list.
+
+end_problem.

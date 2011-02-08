@@ -20,16 +20,22 @@ $(GNU_FOLDER)gdeduction_tree.pl: deduction_tree.pl
 gdeduction_tree: $(GNU_FOLDER)ginference_rules_axioms.pl $(GNU_FOLDER)gdepth_distance.pl $(GNU_FOLDER)gdeduction_tree.pl $(GNU_FOLDER)deduction_tree_c.c
 	$(GPLC) -C "$(CFLAGS)" $(GNU_FOLDER)gdeduction_tree.pl $(GNU_FOLDER)deduction_tree_c.c -o $(GNU_FOLDER)gdeduction_tree
 
-examples/test_defLIS2010_p.pl: examples/test_defLIS2010.pl
+examples/CondACL_axioms.pl: examples/CondACL_axioms_l.pl
 	cat $< | sed -e "s/latexify(\(.*\), 'examples.*')\./prove(\1)./" > $@
 
-examples/test_fossacs11_p.pl: examples/test_fossacs11.pl
+examples/Ex1.pl: examples/Ex1_l.pl
 	cat $< | sed -e "s/latexify(\(.*\), 'examples.*')\./prove(\1)./" > $@
 
-examples/tests_p.pl: examples/tests.pl examples/test_defLIS2010_p.pl examples/test_fossacs11_p.pl
-	cat $< | sed -e "s/latexify(\(.*\), 'examples.*')\./prove(\1)./" -e 's/latexify/deduction_tree/' -e 's/\[\(test_.*\)\]/\[\1_p\]/'> $@
+examples/Ex2.pl: examples/Ex2_l.pl
+	cat $< | sed -e "s/latexify(\(.*\)/prove(\1/" -e "s/\(.*\), 'examples.*')\./\1)./" > $@
 
-tests_p: examples/tests_p.pl
+examples/Ex3.pl: examples/Ex3_l.pl
+	cat $< | sed -e "s/latexify(\(.*\), 'examples.*')\./prove(\1)./" > $@
+
+examples/tests.pl: examples/tests_l.pl examples/CondACL_axioms.pl examples/Ex1.pl examples/Ex2.pl examples/Ex3.pl
+	cat $< | sed -e 's/latexify/deduction_tree/' -e "s/\['\(.*\)_l'\]/\['\1'\]/" > $@
+
+tests: examples/tests.pl
 
 clean:
 	rm -f $(GNU_FOLDER)ginference_rules_axioms.pl $(GNU_FOLDER)gdeduction_tree.pl $(GNU_FOLDER)gdeduction_tree
