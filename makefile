@@ -38,4 +38,4 @@ examples/tests.pl: examples/tests_l.pl examples/CondACL_axioms.pl examples/Ex1.p
 tests: examples/tests.pl
 
 clean:
-	rm -f $(GNU_FOLDER)ginference_rules_axioms.pl $(GNU_FOLDER)gdeduction_tree.pl $(GNU_FOLDER)gdeduction_tree
+	rm -f $(GNU_FOLDER)ginference_rules_axioms.pl $(GNU_FOLDER)gdeduction_tree.pl $(GNU_FOLDER)gdepth_distance.pl $(GNU_FOLDER)gdeduction_tree
